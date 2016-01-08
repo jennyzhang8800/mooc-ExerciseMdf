@@ -1,0 +1,9 @@
+/* CSS for ExerciseMdfXBlock */
+
+.exercisemdf_block .count {
+    font-weight: bold;
+}
+
+.exercisemdf_block p {
+    cursor: pointer;
+}
