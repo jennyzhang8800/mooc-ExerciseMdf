@@ -7,3 +7,11 @@
 .exercisemdf_block p {
     cursor: pointer;
 }
+
+.option-content {
+    width: 100%;
+}
+
+.template {
+    display: none;
+}

@@ -46,7 +46,6 @@ class ExerciseMdfXBlock(XBlock):
         frag = Fragment(html.format(self=self))
 
         for cssFile in CSS_LIST:
-            # frag.add_css(self.resource_string(cssFile))
             frag.add_css_url(cssFile)
 
         for jsFile in JS_LIST:

@@ -1,10 +1,110 @@
-<div class="exercisemdf_block">
-    <p>ExerciseMdfXBlock: count is now
-    <span class='count'>{self.count}</span> (click me to increment).
-    </p>
-    <div class="alert alert-danger" role="alert">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        Enter a valid email address
+
+<div id="option-item-template" class="template">
+    <tr class='opt-item'>
+        <td id="opt"></td>
+        <td><input type="text" class="option-content" id="opt-content"></td>
+        <td><input type="checkbox" id="opt-right">是</td>
+    </tr>
+</div>
+
+<div id="question-detail-template" class="template">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题号</label>
+            <div class="col-sm-10">
+                <p class="form-control-static" id="q_number">分配中...</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题目类型</label>
+            <div class="col-sm-10">
+                <p class="form-control-static" id="type">多选题</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题目来源</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="source">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">知识点</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="knowledge">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">难度</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" id="degree_of_difficulty">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题干正文</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="3" id="question"></textarea>
+            </div>
+        </div>
+        <div class="form-group" id="ctrl-option-group">
+            <label class="col-sm-2 control-label">选项</label>
+            <div class="col-sm-10">
+                <table class="table table-condensed">
+                    <thead>
+                        <td>#</td>
+                        <td>选项内容</td>
+                        <td>是否正确答案</td>
+                    </thead>
+                    <tbody id="option-list">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">答案及解释</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="explain"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-2">
+                <a class="btn btn-success btn-block">保存</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">题目编辑</h3>
+    </div>
+    <div class="panel-body" id="question-detail">
+    </div>
+</div>
+
+<div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+    <strong>Error!</strong> q_number 8090 not found!
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="form-inline">
+            <div class="form-group col-sm-offset-2">
+                <input type="number" class="form-control" placeholder="输入题号">
+                <a class="btn btn-primary" id="loadDataBtn">载入</a>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    新建...<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">单选题</a></li>
+                    <li><a href="#">多选题</a></li>
+                    <li><a href="#">判断题</a></li>
+                    <li><a href="#">问答题</a></li>
+                    <li><a href="#">判断题</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
