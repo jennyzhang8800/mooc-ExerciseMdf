@@ -1,4 +1,5 @@
 /* Javascript for ExerciseMdfXBlock. */
+
 function ExerciseMdfXBlock(runtime, element) {
 
     var STR_TYPE = {
@@ -19,6 +20,7 @@ function ExerciseMdfXBlock(runtime, element) {
 
     function updateEditPad(qJson) {
         console.info(qJson);
+        //qJson = qJson.res;
         // TODO 检查json状态
         var template = $('#question-detail').html($('#question-detail-template').html());
 
@@ -57,10 +59,12 @@ function ExerciseMdfXBlock(runtime, element) {
     //var handlerUrl = runtime.handlerUrl(element, 'increment_count');
 
     $('#loadDataBtn', element).on('click', function(eventObject) {
+        //var qNo = $('#question-number').val();
         $.ajax({
             type: 'POST',
-            url: '/static/test/fill_in_the_blank_test.json',
-            //data: JSON.stringify({"hello": "world"}),
+            //url: runtime.handlerUrl(element, 'getQuestionJson'),
+            url: '/static/test/multi_answer_test.json',
+            //data: JSON.stringify({'q_number': qNo}),
             success: updateEditPad
         });
     });

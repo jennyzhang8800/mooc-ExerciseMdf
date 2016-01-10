@@ -9,10 +9,10 @@
 
 <div id="question-detail-template" class="template">
     <div class="form-horizontal">
-        <div class="form-group">
-            <label class="col-sm-2 control-label">题号</label>
-            <div class="col-sm-10">
-                <p class="form-control-static" id="q_number">分配中...</p>
+        <div class="control-group">
+            <label class="control-label">题号</label>
+            <div class="controls">
+                <span class="span12 uneditable-input" id="q_number">分配中...</span>
             </div>
         </div>
         <div class="form-group">
@@ -21,10 +21,10 @@
                 <p class="form-control-static" id="type">多选题</p>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">题目来源</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="source">
+        <div class="control-group">
+            <label class="control-label">题目来源</label>
+            <div class="controls">
+                <input type="text" id="source">
             </div>
         </div>
         <div class="form-group">
@@ -90,7 +90,7 @@
     <div class="panel-body">
         <div class="form-inline">
             <div class="form-group col-sm-offset-2">
-                <input type="number" class="form-control" placeholder="输入题号">
+                <input type="number" class="form-control" placeholder="输入题号" id="question-number">
                 <a class="btn btn-primary" id="loadDataBtn">载入</a>
             </div>
             <div class="btn-group">

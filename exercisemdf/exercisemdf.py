@@ -5,6 +5,7 @@ import pkg_resources
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer
 from xblock.fragment import Fragment
+import urllib2
 
 
 class ExerciseMdfXBlock(XBlock):
@@ -34,12 +35,12 @@ class ExerciseMdfXBlock(XBlock):
         HTML_FILE = "static/html/exercisemdf.html"
         JS_LIST = [
             "/static/js/src/exercisemdf.js",
-            "/static/js/jquery-1.11.3.js",
-            "/static/bootstrap/js/bootstrap.min.js",
+            # "/static/js/jquery-1.11.3.js",
+            "/static/bootstrap2/js/bootstrap.min.js",
         ]
         CSS_LIST = [
             "/static/css/exercisemdf.css",
-            "/static/bootstrap/css/bootstrap.min.css",
+            "/static/bootstrap2/css/bootstrap.min.css",
         ]
 
         html = self.resource_string(HTML_FILE)
@@ -54,18 +55,23 @@ class ExerciseMdfXBlock(XBlock):
         frag.initialize_js('ExerciseMdfXBlock')
         return frag
 
-    # TO-DO: change this handler to perform your own actions.  You may need more
-    # than one handler, or you may not need any handlers at all.
-    # @XBlock.json_handler
-    # def increment_count(self, data, suffix=''):
-    #     """
-    #     An example handler, which increments the data.
-    #     """
-    #     # Just to show data coming in...
-    #     assert data['hello'] == 'world'
-
-    #     self.count += 1
-    #     return {"count": self.count}
+    @XBlock.json_handler
+    def getQuestionJson(self, data, suffix=''):
+        q_number = int(data['q_number'])
+        gitRepo = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library'
+        url = '%s/master/data/json/%d/%d.json' % (
+            gitRepo,
+            (q_number / 100) + 1,
+            q_number,
+        )
+        req = urllib2.Request(url)
+        res_data = urllib2.urlopen(req)
+        res = res_data.read()
+        return {
+            'code': 0,
+            'desc': 'ok',
+            'res': eval(res),
+        }
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
