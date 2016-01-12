@@ -9,9 +9,14 @@
 }
 
 .option-content {
-    width: 100%;
+    width: 80%;
 }
 
 .template {
     display: none;
+}
+
+.navbar-search-question {
+    margin-top: 6px;
+    margin-right: 13px;
 }

@@ -64,13 +64,31 @@ class ExerciseMdfXBlock(XBlock):
             (q_number / 100) + 1,
             q_number,
         )
-        req = urllib2.Request(url)
-        res_data = urllib2.urlopen(req)
-        res = res_data.read()
+        try:
+            req = urllib2.Request(url)
+            res_data = urllib2.urlopen(req)
+            res = res_data.read()
+            return {
+                'code': 0,
+                'desc': 'ok',
+                'res': eval(res),
+            }
+        except urllib2.HTTPError as e:
+            if (e.code == 404):
+                return {
+                    'code': 1,
+                    'type': 'error',
+                    'desc': u'题号为%d的题目不存在' % q_number
+                }
+        except urllib2.URLError as e:
+            return {
+                'code': 1,
+                'type': 'error',
+                'desc': str(e),
+            }
         return {
-            'code': 0,
-            'desc': 'ok',
-            'res': eval(res),
+            'code': 99,
+            'desc': 'unknown error',
         }
 
     # TO-DO: change this to create the scenarios you'd like to see in the
