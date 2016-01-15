@@ -2,6 +2,7 @@
 # author:luofuwen
 import pkg_resources
 
+from gitRepo import ExerciseRepo
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer
 from xblock.fragment import Fragment
@@ -89,6 +90,22 @@ class ExerciseMdfXBlock(XBlock):
         return {
             'code': 99,
             'desc': 'unknown error',
+        }
+
+    @XBlock.json_handler
+    def setQuestionJson(self, data, suffix=''):
+        repo = ExerciseRepo('/www/data/os_course_exercise_library')
+        repo.setUser({'email': 'haeven1881@163.com', 'name': 'www-data'})
+
+        # TODO check json
+        data['status'] = 'ok'
+
+        if not data['q_number']:
+            data['q_number'] = repo.getMaxQNo() + 1
+        repo.setExercise(data)
+        return {
+            'code': 0,
+            'q_number': data['q_number'],
         }
 
     # TO-DO: change this to create the scenarios you'd like to see in the

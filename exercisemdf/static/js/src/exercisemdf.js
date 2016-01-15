@@ -25,8 +25,8 @@ function ExerciseMdfXBlock(runtime, element) {
         template.find('input#source').val(qJson.source);
         template.find('input#knowledge').val(qJson.knowledge);
         template.find('input#degree_of_difficulty').val(qJson.degree_of_difficulty);
-        template.find('textarea#question').text(qJson.question);
-        template.find('textarea#explain').text(qJson.explain);
+        template.find('textarea#question-content').val(qJson.question);
+        template.find('textarea#explain').val(qJson.explain);
 
         // 更新option部分
         if (HAS_OPTIONS[qJson.type]) {
@@ -60,13 +60,13 @@ function ExerciseMdfXBlock(runtime, element) {
     function getForm() {
         var json = {};
         var template = $('#question-detail');
-        json.q_number = template.find('#q_number').text();
+        json.q_number = parseInt(template.find('#q_number').text());
         json.type = template.find('#question').attr('data-type');
         json.source = template.find('input#source').val();
         json.knowledge = template.find('input#knowledge').val();
-        json.degree_of_difficulty = template.find('input#degree_of_difficulty').val();
-        json.question = template.find('textarea#question').text();
-        json.explain = template.find('textarea#explain').text();
+        json.degree_of_difficulty = parseInt(template.find('input#degree_of_difficulty').val());
+        json.question = template.find('textarea#question-content').val();
+        json.explain = template.find('textarea#explain').val();
         if (HAS_OPTIONS[json.type]) {
             json.options = [];
             json.answer = '';
@@ -90,13 +90,14 @@ function ExerciseMdfXBlock(runtime, element) {
         qJson = checkJson(qJson);
         if (qJson == null)
             return;
-        var template = $('#question-detail').html($('#question-detail-template').html());
-        fillTemplate(template, qJson);
+        $('#question-detail').html($('#question-detail-template').html());
+        fillTemplate($('#question-detail'), qJson);
     }
 
     function makeAlart(type, desc) {
         $('#alart-view').empty();
-        var template = $('#alart-view').html($('#alart-' + type + '-template').html());
+        $('#alart-view').html($('#alart-' + type + '-template').html());
+        var template = $('#alart-view')
         template.find('#alart-desc').text(desc);
     }
 
@@ -121,7 +122,16 @@ function ExerciseMdfXBlock(runtime, element) {
 
     function initJsForPad() {
         $('#save-btn', element).on('click', function(eventObject) {
-            var data = getForm(); console.info(data);
+            var data = getForm();
+            console.info(data);
+            $.ajax({
+                type: 'POST',
+                url: runtime.handlerUrl(element, 'setQuestionJson'),
+                data: JSON.stringify(data),
+                success: finishSaving,
+                failure: handleFailure
+            });
+            startSaving();
         });
 
         $('#add-option-btn', element).on('click', function(eventObject) {
@@ -146,10 +156,33 @@ function ExerciseMdfXBlock(runtime, element) {
         });
     }
 
+    function handleFailure(XMLHttpRequest, textStatus, errorThrown) {
+        makeAlart('error', 'Status: ' + XMLHttpRequest.status + ' ' + textStatus);
+    }
+
+    function startLoading() {
+        $('#question-detail').empty();
+        $('#alart-view').empty();
+        $('#loadDataBtn').text('载入中...');
+    }
+
+    function finishLoading(data) {
+        $('#loadDataBtn').text('载入');
+        updateEditPad(data);
+    }
+
+    function startSaving() {
+        $('#question #save-btn').text('保存中...');
+    }
+
+    function finishSaving(data) {
+        makeAlart('success', '题目保存编号为:' + data.q_number + ', 您可以通过载入对应题号查看')
+        $('#question-detail').empty();
+    }
 
     $('#gen_single_answer', element).on('click', function(eventObject) {
-        var template = $('#question-detail').html($('#question-detail-template').html());
-        fillTemplate(template, {
+        $('#question-detail').html($('#question-detail-template').html());
+        fillTemplate($('#question-detail'), {
             'q_number': 'please wait...',
             'type': 'single_answer',
             'options': [
@@ -163,8 +196,8 @@ function ExerciseMdfXBlock(runtime, element) {
     });
 
     $('#gen_multi_answer', element).on('click', function(eventObject) {
-        var template = $('#question-detail').html($('#question-detail-template').html());
-        fillTemplate(template, {
+        $('#question-detail').html($('#question-detail-template').html());
+        fillTemplate($('#question-detail'), {
             'q_number': 'please wait...',
             'type': 'multi_answer',
             'options': [
@@ -178,8 +211,8 @@ function ExerciseMdfXBlock(runtime, element) {
     });
 
     $('#gen_true_false', element).on('click', function(eventObject) {
-        var template = $('#question-detail').html($('#question-detail-template').html());
-        fillTemplate(template, {
+        $('#question-detail').html($('#question-detail-template').html());
+        fillTemplate($('#question-detail'), {
             'q_number': 'please wait...',
             'type': 'true_false',
             'options': [
@@ -191,16 +224,16 @@ function ExerciseMdfXBlock(runtime, element) {
     });
 
     $('#gen_question_answer', element).on('click', function(eventObject) {
-        var template = $('#question-detail').html($('#question-detail-template').html());
-        fillTemplate(template, {
+        $('#question-detail').html($('#question-detail-template').html());
+        fillTemplate($('#question-detail'), {
             'q_number': 'please wait...',
             'type': 'question_answer',
         });
     });
 
     $('#gen_fill_in_the_blank', element).on('click', function(eventObject) {
-        var template = $('#question-detail').html($('#question-detail-template').html());
-        fillTemplate(template, {
+        $('#question-detail').html($('#question-detail-template').html());
+        fillTemplate($('#question-detail'), {
             'q_number': 'please wait...',
             'type': 'fill_in_the_blank',
         });
@@ -217,8 +250,10 @@ function ExerciseMdfXBlock(runtime, element) {
             url: runtime.handlerUrl(element, 'getQuestionJson'),
             //url: '/static/test/multi_answer_test.json',
             data: JSON.stringify({'q_number': qNo}),
-            success: updateEditPad
+            success: finishLoading,
+            failure: handleFailure
         });
+        startLoading();
     });
 
     $(function($) {
