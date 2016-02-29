@@ -5,11 +5,11 @@
 class Config():
     # local git repo config
     localRepoDir = '/www/data/os_course_exercise_library'
-    localJsonFile = '%(localRepoDir)/data/json/%(qDir)/%(qNo).json'
+    localJsonFile = '%(localRepoDir)s/data/json/%(qDir)d/%(qNo)d.json'
     commitDir = 'data/json/*'
     commitEmail = 'user@example.com'
     commitName = 'www-data'
-    commitText = 'debug: update %(qNo).json'
+    commitText = 'debug: update %(qNo)d.json'
 
     # github config
-    questionJsonUrl = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library/master/data/json/%(qDir)/%(qNo).json'
+    questionJsonUrl = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library/master/data/json/%(qDir)d/%(qNo)d.json'
