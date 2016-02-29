@@ -34,25 +34,11 @@ class ExerciseMdfXBlock(XBlock):
         The primary view of the ExerciseMdfXBlock, shown to students
         when viewing courses.
         """
-        HTML_FILE = "static/html/exercisemdf.html"
-        JS_LIST = [
-            "/static/js/src/exercisemdf.js",
-            # "/static/js/jquery-1.11.3.js",
-            "/static/bootstrap2/js/bootstrap.min.js",
-        ]
-        CSS_LIST = [
-            "/static/css/exercisemdf.css",
-            "/static/bootstrap2/css/bootstrap.min.css",
-        ]
+        HTML_FILE = "static/index.html"
 
         html = self.resource_string(HTML_FILE)
         frag = Fragment(html.format(self=self))
-
-        for cssFile in CSS_LIST:
-            frag.add_css_url(cssFile)
-
-        for jsFile in JS_LIST:
-            frag.add_javascript_url(jsFile)
+        frag.add_javascript(self.resource_string("static/index.js"))
 
         frag.initialize_js('ExerciseMdfXBlock')
         return frag
@@ -86,7 +72,7 @@ class ExerciseMdfXBlock(XBlock):
                     'type': 'error',
                     'desc': u'题号为%d的题目不存在' % q_number
                 }
-        except urllib2.URLError as e:
+        except Exception as e:
             return {
                 'code': 1,
                 'type': 'error',

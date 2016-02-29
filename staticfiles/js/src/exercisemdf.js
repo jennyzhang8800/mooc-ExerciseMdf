@@ -1,6 +1,6 @@
 /* Javascript for ExerciseMdfXBlock. */
-
-function ExerciseMdfXBlock(runtime, element) {
+$(function($) {
+    var element = document;
 
     var STR_TYPE = {
         'single_answer': '单选题',
@@ -121,20 +121,17 @@ function ExerciseMdfXBlock(runtime, element) {
     //var handlerUrl = runtime.handlerUrl(element, 'increment_count');
 
     function initJsForPad() {
-        $('#save-btn', element).on('click', function(eventObject) {
+        $('#question-detail #save-btn').on('click', function(eventObject) {
             var data = getForm();
-            //console.info(data);
-            $.ajax({
-                type: 'POST',
-                url: runtime.handlerUrl(element, 'setQuestionJson'),
+            parent.xblockPost({
                 data: JSON.stringify(data),
                 success: finishSaving,
                 failure: handleFailure
-            });
+            }, 'setQuestionJson');
             startSaving();
         });
 
-        $('#add-option-btn', element).on('click', function(eventObject) {
+        $('#question-detail #add-option-btn').on('click', function(eventObject) {
             var ol = $('#question-detail #option-list');
             var optItem = $('\
                 <tr> \
@@ -151,7 +148,7 @@ function ExerciseMdfXBlock(runtime, element) {
             ol.append(optItem);
         });
 
-        $('#remove-option-btn', element).on('click', function(eventObject) {
+        $('#question-detail #remove-option-btn').on('click', function(eventObject) {
             $('#question-detail #option-list tr:last').remove();
         });
     }
@@ -245,18 +242,11 @@ function ExerciseMdfXBlock(runtime, element) {
             makeAlart('warning', '请输入题号');
             return;
         }
-        $.ajax({
-            type: 'POST',
-            url: runtime.handlerUrl(element, 'getQuestionJson'),
-            //url: '/static/test/multi_answer_test.json',
+        parent.xblockPost({
             data: JSON.stringify({'q_number': qNo}),
             success: finishLoading,
             failure: handleFailure
-        });
+        }, 'getQuestionJson');
         startLoading();
     });
-
-    $(function($) {
-        /* Here's where you'd do things on page load. */
-    });
-}
+});

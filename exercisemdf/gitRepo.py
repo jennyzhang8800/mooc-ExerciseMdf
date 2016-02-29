@@ -68,7 +68,7 @@ class ExerciseRepo(GitRepo):
         # commit and push to git hub
         self.checkUser(self.user)
         debug_add = self.add(Config.commitDir)
-        debug_commit = self.commit(Config.commitText)
+        debug_commit = self.commit(Config.commitText % {'qNo': qNo})
         debug_push = self.push()
         return {
             'add': debug_add,
