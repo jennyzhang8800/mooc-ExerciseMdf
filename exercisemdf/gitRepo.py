@@ -3,6 +3,7 @@
 
 import subprocess
 from subprocess import Popen, PIPE
+from conf import Config
 import codecs
 import json
 
@@ -55,14 +56,19 @@ class ExerciseRepo(GitRepo):
         qNo = int(jsonData['q_number'])
 
         # write data to file
-        filePath = '%s/data/json/%d/%d.json' % (self.localRepoDir, (qNo - 1) / 100 + 1, qNo)
+        # filePath = '%s/data/json/%d/%d.json' % (self.localRepoDir, (qNo - 1) / 100 + 1, qNo)
+        filePath = Config.localJsonFile % {
+            'localRepoDir': self.localRepoDir,
+            'qDir': (qNo - 1) / 100 + 1,
+            'qNo': qNo,
+        }
         jsonStr = json.dumps(jsonData, ensure_ascii=False, indent=4, separators=(',', ':'))
         self.saveData(filePath, jsonStr)
 
         # commit and push to git hub
         self.checkUser(self.user)
-        debug_add = self.add('data/json/*')
-        debug_commit = self.commit('debug commit: 这次commit用于测试，提交的数据并不一定正确，请忽使用')
+        debug_add = self.add(Config.commitDir)
+        debug_commit = self.commit(Config.commitText)
         debug_push = self.push()
         return {
             'add': debug_add,
@@ -78,6 +84,9 @@ class ExerciseRepo(GitRepo):
             output.close()
 
     def getMaxQNo(self):
+        # update current repo
+        self.pull()
+
         cmd_getMaxDir = 'ls %s/data/json | sort -n | tail -n 1' % self.localRepoDir
         dirNo = subprocess.check_output(cmd_getMaxDir, shell=True)
         cmd_getMaxQuestion = 'ls %s/data/json/%d | sort -n | tail -n 1' % (self.localRepoDir, int(dirNo))
@@ -85,5 +94,6 @@ class ExerciseRepo(GitRepo):
         return int(maxQJson.split('.')[0])
 
 if __name__ == '__main__':
+    # 这是测试程序
     repo = ExerciseRepo('/www/data/os_course_exercise_library')
     print repo.commit('commit from main')

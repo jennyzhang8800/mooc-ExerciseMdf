@@ -3,6 +3,7 @@
 import pkg_resources
 
 from gitRepo import ExerciseRepo
+from conf import Config
 from xblock.core import XBlock
 from xblock.fields import Scope, Integer
 from xblock.fragment import Fragment
@@ -59,12 +60,16 @@ class ExerciseMdfXBlock(XBlock):
     @XBlock.json_handler
     def getQuestionJson(self, data, suffix=''):
         q_number = int(data['q_number'])
-        gitRepo = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library'
-        url = '%s/master/data/json/%d/%d.json' % (
-            gitRepo,
-            (q_number / 100) + 1,
-            q_number,
-        )
+        # gitRepo = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library'
+        # url = '%s/master/data/json/%d/%d.json' % (
+        #     gitRepo,
+        #     ((q_number - 1) / 100) + 1,
+        #     q_number,
+        # )
+        url = Config.questionJsonUrl % {
+            'qDir': ((q_number - 1) / 100) + 1,
+            'qNo': q_number,
+        }
         try:
             req = urllib2.Request(url)
             res_data = urllib2.urlopen(req)
@@ -94,10 +99,12 @@ class ExerciseMdfXBlock(XBlock):
 
     @XBlock.json_handler
     def setQuestionJson(self, data, suffix=''):
-        repo = ExerciseRepo('/www/data/os_course_exercise_library')
-        repo.setUser({'email': 'haeven1881@163.com', 'name': 'www-data'})
+        repo = ExerciseRepo(Config.localRepoDir)
+        repo.setUser({'email': Config.commitEmail, 'name': Config.commitName})
 
         # TODO check json
+        # if (data['type'] == 'single_answer' && ):
+
         data['status'] = 'ok'
 
         if not data['q_number']:

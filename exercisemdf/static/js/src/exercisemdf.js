@@ -63,7 +63,7 @@ function ExerciseMdfXBlock(runtime, element) {
         json.q_number = parseInt(template.find('#q_number').text());
         json.type = template.find('#question').attr('data-type');
         json.source = template.find('input#source').val();
-        json.knowledge = template.find('input#knowledge').val();
+        json.knowledge = template.find('input#knowledge').val().split(',');
         json.degree_of_difficulty = parseInt(template.find('input#degree_of_difficulty').val());
         json.question = template.find('textarea#question-content').val();
         json.explain = template.find('textarea#explain').val();
@@ -123,7 +123,7 @@ function ExerciseMdfXBlock(runtime, element) {
     function initJsForPad() {
         $('#save-btn', element).on('click', function(eventObject) {
             var data = getForm();
-            console.info(data);
+            //console.info(data);
             $.ajax({
                 type: 'POST',
                 url: runtime.handlerUrl(element, 'setQuestionJson'),
