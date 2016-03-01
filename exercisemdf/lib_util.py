@@ -47,7 +47,7 @@ class Util(object):
         template = Template(template_str)
         return template.render(Context(context))
 
-    _log_file = "/tmp/uc_docker_xblock.log"
+    _log_file = "/tmp/exercise_modify.log"
     _fh = logging.FileHandler(_log_file, encoding="utf-8")
     _fmt = logging.Formatter("%(asctime)s - %(filename)s:%(lineno)s - %(name)s - %(message)s")
     _fh.setFormatter(_fmt)

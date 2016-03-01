@@ -80,8 +80,14 @@ class ExerciseMdfXBlock(XBlock):
         repo.setUser({'email': Config.commitEmail, 'name': Config.commitName})
 
         try:
-            # TODO check json
-            # if (data['type'] == 'single_answer' && ):
+            # 简单检查题目是否合理
+            lenOfAnswer = len(data['answer'].strip())
+            questionType = data['type']
+            if lenOfAnswer == 0:
+                return {'code': 2, 'type': 'warning', 'desc': '答案不能为空'}
+            if questionType == 'single_answer' and lenOfAnswer != 1:
+                return {'code': 2, 'type': 'warning', 'desc': '单选题的答案个数仅有一个'}
+
 
             data['status'] = 'ok'
 
@@ -89,12 +95,10 @@ class ExerciseMdfXBlock(XBlock):
                 data['q_number'] = repo.getMaxQNo() + 1
             repo.setExercise(data)
             self.logger.info('setQuestionJson [qNo=%d] [%s]' % (data['q_number'], json.dump(data)))
-            return {
-                'code': 0,
-                'q_number': data['q_number'],
-            }
+            return {'code': 0, 'q_number': data['q_number']}
         except Exception as e:
             self.logger.info('ERROR setQuestionJson [qNo=%d] [desc=%s] [%s]' % (data['q_number'], str(e), json.dump(data)))
+            return {'code': 1, 'type': 'error', 'desc': '发生未知错误, %s' % str(e)}
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

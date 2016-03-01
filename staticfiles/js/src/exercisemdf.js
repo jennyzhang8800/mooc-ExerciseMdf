@@ -108,13 +108,12 @@ $(function($) {
             }
             return json.res;
         } else {
-            console.info(json);
             if (json.code == 99) {
                 makeAlart('error', 'Unkown Error');
             } else {
                 makeAlart(json.type, json.desc);
             }
-            return undefined;
+            return null;
         }
     }
 
@@ -173,8 +172,12 @@ $(function($) {
     }
 
     function finishSaving(data) {
-        makeAlart('success', '题目保存编号为:' + data.q_number + ', 您可以通过载入对应题号查看')
-        $('#question-detail').empty();
+        if(data.code == 0) {
+            makeAlart('success', '题目保存编号为:' + data.q_number + ', 您可以通过载入对应题号查看')
+            $('#question-detail').empty();
+        } else {
+            makeAlart(data.type, data.desc);
+        }
     }
 
     $('#gen_single_answer', element).on('click', function(eventObject) {
