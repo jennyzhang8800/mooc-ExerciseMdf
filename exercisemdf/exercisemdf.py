@@ -4,10 +4,11 @@ import pkg_resources
 
 from gitRepo import ExerciseRepo
 from conf import Config
+from lib_util import Util
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer
 from xblock.fragment import Fragment
 import urllib2
+import json
 
 
 class ExerciseMdfXBlock(XBlock):
@@ -17,13 +18,10 @@ class ExerciseMdfXBlock(XBlock):
         2. 修改现有题目
     """
 
+    logger = Util.uc_logger()
+
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
-    count = Integer(
-        default=0, scope=Scope.user_state,
-        help="A simple counter, to show something happening",
-    )
-
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
@@ -46,12 +44,6 @@ class ExerciseMdfXBlock(XBlock):
     @XBlock.json_handler
     def getQuestionJson(self, data, suffix=''):
         q_number = int(data['q_number'])
-        # gitRepo = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library'
-        # url = '%s/master/data/json/%d/%d.json' % (
-        #     gitRepo,
-        #     ((q_number - 1) / 100) + 1,
-        #     q_number,
-        # )
         url = Config.questionJsonUrl % {
             'qDir': ((q_number - 1) / 100) + 1,
             'qNo': q_number,
@@ -60,12 +52,14 @@ class ExerciseMdfXBlock(XBlock):
             req = urllib2.Request(url)
             res_data = urllib2.urlopen(req)
             res = res_data.read()
+            self.logger.info('getQuestionJson [qNo=%d] [url=%s]' % (q_number, url))
             return {
                 'code': 0,
                 'desc': 'ok',
                 'res': eval(res),
             }
         except urllib2.HTTPError as e:
+            self.logger.info('ERROR getQuestionJson [qNo=%d] [status=%d] [url=%s]' % (q_number, e.code, url))
             if (e.code == 404):
                 return {
                     'code': 1,
@@ -73,33 +67,34 @@ class ExerciseMdfXBlock(XBlock):
                     'desc': u'题号为%d的题目不存在' % q_number
                 }
         except Exception as e:
+            self.logger.info('ERROR getQuestionJson [qNo=%d] [desc=%s] [url=%s]' % (q_number, str(e), url))
             return {
                 'code': 1,
                 'type': 'error',
                 'desc': str(e),
             }
-        return {
-            'code': 99,
-            'desc': 'unknown error',
-        }
 
     @XBlock.json_handler
     def setQuestionJson(self, data, suffix=''):
         repo = ExerciseRepo(Config.localRepoDir)
         repo.setUser({'email': Config.commitEmail, 'name': Config.commitName})
 
-        # TODO check json
-        # if (data['type'] == 'single_answer' && ):
+        try:
+            # TODO check json
+            # if (data['type'] == 'single_answer' && ):
 
-        data['status'] = 'ok'
+            data['status'] = 'ok'
 
-        if not data['q_number']:
-            data['q_number'] = repo.getMaxQNo() + 1
-        repo.setExercise(data)
-        return {
-            'code': 0,
-            'q_number': data['q_number'],
-        }
+            if not data['q_number']:
+                data['q_number'] = repo.getMaxQNo() + 1
+            repo.setExercise(data)
+            self.logger.info('setQuestionJson [qNo=%d] [%s]' % (data['q_number'], json.dump(data)))
+            return {
+                'code': 0,
+                'q_number': data['q_number'],
+            }
+        except Exception as e:
+            self.logger.info('ERROR setQuestionJson [qNo=%d] [desc=%s] [%s]' % (data['q_number'], str(e), json.dump(data)))
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
