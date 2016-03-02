@@ -73,7 +73,7 @@ $(function($) {
             template.find('#option-list').find('tr').each(function() {
                 var opt = $(this).find('#opt').text();
                 var content = $(this).find('#opt-content').val();
-                var isRight = $(this).find('#opt-is-right').attr('checked') == 'checked'
+                var isRight = $(this).find('#opt-is-right')[0].checked;
 
                 json.options.push(opt + '.' + content);
                 if (isRight) {
@@ -172,6 +172,7 @@ $(function($) {
     }
 
     function finishSaving(data) {
+        $('#question #save-btn').text('保存');
         if(data.code == 0) {
             makeAlart('success', '题目保存编号为:' + data.q_number + ', 您可以通过载入对应题号查看')
             $('#question-detail').empty();

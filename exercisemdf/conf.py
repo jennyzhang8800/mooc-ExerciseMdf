@@ -4,7 +4,7 @@
 
 class Config():
     # local git repo config
-    localRepoDir = '/www/data/os_course_exercise_library'
+    localRepoDir = '/var/www/data/os_course_exercise_library'
     localJsonFile = '%(localRepoDir)s/data/json/%(qDir)d/%(qNo)d.json'
     commitDir = 'data/json/*'
     commitEmail = 'user@example.com'
@@ -13,3 +13,7 @@ class Config():
 
     # github config
     questionJsonUrl = 'https://raw.githubusercontent.com/chyyuu/os_course_exercise_library/master/data/json/%(qDir)d/%(qNo)d.json'
+
+    # log config
+    logFile = '/tmp/exercisemdf_block.log'
+    logFmt = '%(asctime)s - %(filename)s:%(lineno)s - %(name)s - %(message)s'

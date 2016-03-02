@@ -4,6 +4,7 @@
 import subprocess
 from subprocess import Popen, PIPE
 from conf import Config
+from lib_util import Util
 import codecs
 import json
 
@@ -13,16 +14,27 @@ import json
 
 
 class GitRepo():
+    logger = Util.custom_logger({
+        'logFile': Config.logFile,
+        'logFmt': Config.logFmt,
+        'logName': 'GitRepoLog'
+    })
+
     def __init__(self, localRepoDir):
         self.localRepoDir = localRepoDir
 
+    def execInShell(self, cmd):
+        out = subprocess.check_output(cmd, shell=True)
+        self.logger.debug('check_output [cmd=%s] [out=%s]' % (cmd, out))
+        return out
+
     def checkUser(self, user):
-        findEmail = subprocess.check_output('git config -l | grep user.email; exit 0', shell=True)
+        findEmail = self.execInShell('git config -l | grep user.email; exit 0')
         if not findEmail:
-            subprocess.check_output('git config --global user.email "%s"' % user['email'], shell=True)
-        findName = subprocess.check_output('git config -l | grep user.name; exit 0', shell=True)
+            self.execInShell('git config --global user.email "%s"' % user['email'])
+        findName = self.execInShell('git config -l | grep user.name; exit 0')
         if not findName:
-            subprocess.check_output('git config --global user.name "%s"' % user['name'], shell=True)
+            self.execInShell('git config --global user.name "%s"' % user['name'])
 
     def pull(self):
         p = Popen(['git', 'pull'], cwd=self.localRepoDir, stdout=PIPE)
@@ -66,7 +78,7 @@ class ExerciseRepo(GitRepo):
         self.saveData(filePath, jsonStr)
 
         # commit and push to git hub
-        self.checkUser(self.user)
+        # self.checkUser(self.user)
         debug_add = self.add(Config.commitDir)
         debug_commit = self.commit(Config.commitText % {'qNo': qNo})
         debug_push = self.push()
