@@ -9,6 +9,7 @@ from xblock.core import XBlock
 from xblock.fragment import Fragment
 import urllib2
 import json
+import base64
 
 
 class ExerciseMdfXBlock(XBlock):
@@ -52,23 +53,28 @@ class ExerciseMdfXBlock(XBlock):
             'qNo': q_number,
         }
         try:
-            req = urllib2.Request(url)
-            res_data = urllib2.urlopen(req)
+            #req = urllib2.Request(url)
+            res_data = urllib2.urlopen(url)
             res = res_data.read()
-            self.logger.info('getQuestionJson [qNo=%d] [url=%s]' % (q_number, url))
-            return {
-                'code': 0,
-                'desc': 'ok',
-                'res': eval(res),
-            }
-        except urllib2.HTTPError as e:
-            self.logger.exception('ERROR getQuestionJson [qNo=%d] [status=%d] [url=%s]' % (q_number, e.code, url))
-            if (e.code == 404):
-                return {
-                    'code': 1,
-                    'type': 'error',
-                    'desc': u'题号为%d的题目不存在' % q_number
-                }
+            res = json.loads(res)
+            if 'content' in res:
+                content = json.loads(base64.b64decode(res['content']))
+                self.logger.info('getQuestionJson [qNo=%d] [url=%s]' % (q_number, url))
+                return {'code': 0, 'desc': 'ok', 'res': content}
+            elif res['message'] == 'Not Found':
+                self.logger.info('ERROR getQuestionJson [qNo=%d] [msg=%s] [url=%s]' % (q_number, res['message'], url))
+                return {'code': 1, 'type': 'error', 'desc': u'题号为%d的题目不存在' % q_number}
+            else:
+                self.logger.info('ERROR getQuestionJson [qNo=%d] [msg=%s] [url=%s]' % (q_number, res['message'], url))
+                return {'code': 1, 'error': 'error', 'dese': 'Error occurs when loading %d.json message: %s' % (q_number, res['message'])}
+        # except urllib2.HTTPError as e:
+        #     self.logger.exception('ERROR getQuestionJson [qNo=%d] [status=%d] [url=%s]' % (q_number, e.code, url))
+        #     if (e.code == 404):
+        #         return {
+        #             'code': 1,
+        #             'type': 'error',
+        #             'desc': u'题号为%d的题目不存在' % q_number
+        #         }
         except Exception as e:
             self.logger.exception('ERROR getQuestionJson [qNo=%d] [desc=%s] [url=%s]' % (q_number, str(e), url))
             return {
