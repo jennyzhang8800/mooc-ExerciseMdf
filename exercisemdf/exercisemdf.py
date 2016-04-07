@@ -7,6 +7,7 @@ from conf import Config
 from lib_util import Util
 from xblock.core import XBlock
 from xblock.fragment import Fragment
+from xblock.fields import Scope, Integer, String
 import urllib2
 import json
 import base64
@@ -18,6 +19,10 @@ class ExerciseMdfXBlock(XBlock):
         1. 向题库增加题目
         2. 修改现有题目
     """
+    display_name = String(display_name="Display Name",
+                          default= u'题库编辑',
+                          scope=Scope.settings)
+
     logger = Util.custom_logger({
         'logFile': Config.logFile,
         'logFmt': Config.logFmt,
