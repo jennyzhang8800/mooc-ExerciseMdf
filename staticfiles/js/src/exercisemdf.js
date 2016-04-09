@@ -15,7 +15,7 @@ $(function($) {
         'multi_answer': true,
         'true_false': true,
         'question_answer': false,
-        'fill_in_the_blank': false,
+        'fill_in_the_blank': true,
     };
 
     function fillTemplate(template, qJson) {
@@ -237,6 +237,10 @@ $(function($) {
         fillTemplate($('#question-detail'), {
             'q_number': 'please wait...',
             'type': 'fill_in_the_blank',
+            'options': [
+                'A._',
+            ],
+            'answer': '',
         });
     });
 
