@@ -83,6 +83,9 @@ $(function($) {
         } else {
             json.answer = json.explain;
         }
+        if (json.type == 'fill_in_the_blank') {
+            json.answer = json.explain;
+        }
         return json;
     }
 
@@ -257,4 +260,32 @@ $(function($) {
         }, 'getQuestionJson');
         startLoading();
     });
+
+    function getUrlInfo() {
+        var url = window.location.search;
+        var args = {};
+        if (url.indexOf('?') != -1) {
+            var str = url.substr(1);
+            var arglist = str.split('&');
+            for (var i in arglist) {
+                argstr = arglist[i];
+                if (argstr != null & argstr != '') {
+                    var key = argstr.split('=')[0];
+                    var value = argstr.split('=')[1];
+                    if (args[key] == undefined) {
+                        args[key] = [];
+                    }
+                    args[key].push(unescape(value));
+                }
+            }
+        }
+        return args;
+    }
+
+    // 自动填入url指定的题号
+    var urlArgs = getUrlInfo();
+    if (urlArgs.qno != undefined) {
+        $('#question-number').val(urlArgs.qno[0]);
+        $('#loadDataBtn').trigger('click');
+    }
 });

@@ -19,4 +19,8 @@ function ExerciseMdfXBlock(runtime, element) {
             frame.webkitRequestFullscreen();
         }
     });
+
+    // parse uri args to iframe
+    curSrc = $('iframe').attr('src');
+    $('iframe').attr('src', curSrc + location.search);
 }
